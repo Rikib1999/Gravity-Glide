@@ -6,9 +6,16 @@ public class Player : MonoBehaviour
     public float speed = 1.0f;
     public Vector2 direction;
 
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
     void Start()
     {
-        GetComponent<Rigidbody2D>().AddForce(direction.normalized * speed, ForceMode2D.Impulse);
+        rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
     }
 
     private void OnDrawGizmos()

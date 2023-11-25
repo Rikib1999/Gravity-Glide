@@ -1,5 +1,7 @@
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ArtificialGravity : MonoBehaviour
 {
