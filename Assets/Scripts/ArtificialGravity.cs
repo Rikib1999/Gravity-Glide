@@ -17,6 +17,7 @@ public class ArtificialGravity : MonoBehaviour
 
     public float strength = 0.0f;
     public bool attractiveForce = true;
+    public GameObject radiusGraphics;
 
     private ParticleSystem pm;
 
@@ -45,8 +46,9 @@ public class ArtificialGravity : MonoBehaviour
 
     private void SetRadius(float value)
     {
-        Radius = Mathf.Clamp(value, 2f, 8f);
+        radius = Mathf.Clamp(value, 3f, 10f);
         SetParticles();
+        radiusGraphics.transform.localScale = new Vector3(Radius, Radius, 1);
     }
 
     void OnTriggerStay2D(Collider2D other)
