@@ -45,12 +45,25 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
+    private int goalsLeft;
+    public int GoalsLeft
+    {
+        get { return goalsLeft; }
+        set
+        {
+            goalsLeft = value;
+            if (goalsLeft <= 0) LevelCompleted();
+        }
+    }
+
     private void Start()
     {
         Vector2 cursorHotspot = new Vector2(cursorTexture.width / 2, cursorTexture.height / 2);
         Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
         AttractiveLeft = attractiveAvailable;
         RepulsiveLeft = repulsiveAvailable;
+
+        GoalsLeft = GameObject.FindGameObjectsWithTag("Goal").Length;
     }
 
     private void Update()
@@ -124,5 +137,10 @@ public class LevelManager : Singleton<LevelManager>
 
         AttractiveLeft = attractiveAvailable;
         RepulsiveLeft = repulsiveAvailable;
+    }
+
+    public void LevelCompleted()
+    {
+        Time.timeScale = 0f;
     }
 }
