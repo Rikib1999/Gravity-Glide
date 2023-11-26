@@ -1,6 +1,8 @@
 using Assets.Scripts;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -15,6 +17,8 @@ public class LevelManager : Singleton<LevelManager>
     private List<ArtificialGravity> artificialGravityList = new();
 
     public static bool IsPlaying => player != null;
+
+    public TMP_Text playStopButtonText;
 
     [SerializeField] private int attractiveAvailable;
     [SerializeField] private int repulsiveAvailable;
@@ -64,6 +68,8 @@ public class LevelManager : Singleton<LevelManager>
         RepulsiveLeft = repulsiveAvailable;
 
         GoalsLeft = GameObject.FindGameObjectsWithTag("Goal").Length;
+
+        playStopButtonText.text = "Play";
     }
 
     private void Update()
@@ -115,11 +121,13 @@ public class LevelManager : Singleton<LevelManager>
         {
             Destroy(player);
             player = null;
+            playStopButtonText.text = "Play";
         }
         else
         {
             player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
             if (lastArtificialGravity != null) lastArtificialGravity.radiusGraphics.GetComponent<SpriteRenderer>().enabled = false;
+            playStopButtonText.text = "Stop";
         }
     }
 
@@ -137,10 +145,17 @@ public class LevelManager : Singleton<LevelManager>
 
         AttractiveLeft = attractiveAvailable;
         RepulsiveLeft = repulsiveAvailable;
+
+        playStopButtonText.text = "Play";
     }
 
     public void LevelCompleted()
     {
         Time.timeScale = 0f;
+    }
+
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }
