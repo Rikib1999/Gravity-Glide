@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Wall"))
         {
-            LevelManager.Instance.playStopButtonText.text = "Play";
+            LevelManager.Instance.PlayStopButtonText.text = "Play";
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<ParticleSystem>().Play();
         }

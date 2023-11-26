@@ -21,8 +21,6 @@ namespace Assets.Scripts
             {
                 Destroy(gameObject);
             }
-
-            DontDestroyOnLoad(gameObject);
         }
     }
 }

@@ -10,7 +10,7 @@ public class LevelManager : Singleton<LevelManager>
     public GameObject attractivePrefab;
     public GameObject repulsivePrefab;
 
-    public Transform spawnPoint;
+    private Transform spawnPoint;
 
     private static GameObject player;
     private ArtificialGravity lastArtificialGravity;
@@ -18,14 +18,14 @@ public class LevelManager : Singleton<LevelManager>
 
     public static bool IsPlaying => player != null;
 
-    public TMP_Text playStopButtonText;
+    public TMP_Text PlayStopButtonText { get; set; }
 
     [SerializeField] private int attractiveAvailable;
     [SerializeField] private int repulsiveAvailable;
 
     [SerializeField] private Texture2D cursorTexture;
-    public GravityLeft attractiveText;
-    public GravityLeft repulsiveText;
+    private GravityLeft attractiveText;
+    private GravityLeft repulsiveText;
 
     private int attractiveLeft;
     public int AttractiveLeft
@@ -60,6 +60,16 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
+    protected override void Awake()
+    {
+        spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
+        attractiveText = GameObject.FindGameObjectWithTag("AttractiveLeft").GetComponent<GravityLeft>();
+        repulsiveText = GameObject.FindGameObjectWithTag("RepulsiveLeft").GetComponent<GravityLeft>();
+        PlayStopButtonText = GameObject.FindGameObjectWithTag("PlayStopButton").GetComponent<TMP_Text>();
+
+        base.Awake();
+    }
+
     private void Start()
     {
         Vector2 cursorHotspot = new Vector2(cursorTexture.width / 2, cursorTexture.height / 2);
@@ -69,7 +79,7 @@ public class LevelManager : Singleton<LevelManager>
 
         GoalsLeft = GameObject.FindGameObjectsWithTag("Goal").Length;
 
-        playStopButtonText.text = "Play";
+        PlayStopButtonText.text = "Play";
     }
 
     private void Update()
@@ -115,38 +125,38 @@ public class LevelManager : Singleton<LevelManager>
         if (lastArtificialGravity != null && Input.mouseScrollDelta.y != 0) lastArtificialGravity.Radius += Input.mouseScrollDelta.y;
     }
 
-    public void PlayStop()
+    public static void PlayStop()
     {
         if (IsPlaying)
         {
             Destroy(player);
             player = null;
-            playStopButtonText.text = "Play";
+            Instance.PlayStopButtonText.text = "Play";
         }
         else
         {
-            player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-            if (lastArtificialGravity != null) lastArtificialGravity.radiusGraphics.GetComponent<SpriteRenderer>().enabled = false;
-            playStopButtonText.text = "Stop";
+            player = Instantiate(Instance.playerPrefab, Instance.spawnPoint.position, Quaternion.identity);
+            if (Instance.lastArtificialGravity != null) Instance.lastArtificialGravity.radiusGraphics.GetComponent<SpriteRenderer>().enabled = false;
+            Instance.PlayStopButtonText.text = "Stop";
         }
     }
 
-    public void Restart()
+    public static void Restart()
     {
         Destroy(player);
         player = null;
 
-        foreach (var item in artificialGravityList)
+        foreach (var item in Instance.artificialGravityList)
         {
             if (item != null) Destroy(item.gameObject);
         }
 
-        artificialGravityList = new List<ArtificialGravity>();
+        Instance.artificialGravityList = new List<ArtificialGravity>();
 
-        AttractiveLeft = attractiveAvailable;
-        RepulsiveLeft = repulsiveAvailable;
+        Instance.AttractiveLeft = Instance.attractiveAvailable;
+        Instance.RepulsiveLeft = Instance.repulsiveAvailable;
 
-        playStopButtonText.text = "Play";
+        Instance.PlayStopButtonText.text = "Play";
     }
 
     public void LevelCompleted()
@@ -154,7 +164,7 @@ public class LevelManager : Singleton<LevelManager>
         Time.timeScale = 0f;
     }
 
-    public void GoToMenu()
+    public static void GoToMenu()
     {
         SceneManager.LoadScene("Menu");
     }
