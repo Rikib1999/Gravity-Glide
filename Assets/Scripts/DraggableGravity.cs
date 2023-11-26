@@ -25,6 +25,18 @@ public class DraggableGravity : MonoBehaviour
         Vector2 ray = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(ray, Vector2.zero, 100.0f, 1 << 6);
 
-        if (!hit) Destroy(gameObject.transform.root.gameObject);
+        if (!hit)
+        {
+            if (gameObject.transform.root.gameObject.GetComponent<ArtificialGravity>().attractiveForce)
+            {
+                LevelManager.Instance.AttractiveLeft++;
+            }
+            else
+            {
+                LevelManager.Instance.RepulsiveLeft++;
+            }
+
+            Destroy(gameObject.transform.root.gameObject);
+        }
     }
 }
