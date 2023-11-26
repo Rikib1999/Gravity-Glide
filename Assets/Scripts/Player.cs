@@ -29,6 +29,15 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("Wall"))
         {
             LevelManager.Instance.PlayStopButtonText.text = "Play";
+
+            foreach (var g in LevelManager.Instance.goals)
+            {
+                g.SetActive(true);
+                g.GetComponent<Goal>().wasReached = false;
+            }
+
+            LevelManager.Instance.GoalsLeft = LevelManager.Instance.originalGoalsLeft;
+
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<ParticleSystem>().Play();
         }

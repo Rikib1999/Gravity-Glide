@@ -49,6 +49,8 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
+    public int originalGoalsLeft;
+
     private int goalsLeft;
     public int GoalsLeft
     {
@@ -60,24 +62,30 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
+    public GameObject levelCompleted;
+
+    public GameObject[] goals;
+
     protected override void Awake()
     {
         spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
         attractiveText = GameObject.FindGameObjectWithTag("AttractiveLeft").GetComponent<GravityLeft>();
         repulsiveText = GameObject.FindGameObjectWithTag("RepulsiveLeft").GetComponent<GravityLeft>();
         PlayStopButtonText = GameObject.FindGameObjectWithTag("PlayStopButton").GetComponent<TMP_Text>();
+        goals = GameObject.FindGameObjectsWithTag("Goal");
 
         base.Awake();
     }
 
     private void Start()
     {
-        Vector2 cursorHotspot = new Vector2(cursorTexture.width / 2, cursorTexture.height / 2);
+        Vector2 cursorHotspot = new(cursorTexture.width / 2, cursorTexture.height / 2);
         Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
         AttractiveLeft = attractiveAvailable;
         RepulsiveLeft = repulsiveAvailable;
 
         GoalsLeft = GameObject.FindGameObjectsWithTag("Goal").Length;
+        originalGoalsLeft = GoalsLeft;
 
         PlayStopButtonText.text = "Play";
     }
@@ -127,11 +135,21 @@ public class LevelManager : Singleton<LevelManager>
 
     public static void PlayStop()
     {
+        if (Instance.levelCompleted.activeInHierarchy) return;
+
         if (IsPlaying)
         {
             Destroy(player);
             player = null;
             Instance.PlayStopButtonText.text = "Play";
+
+            foreach (var g in Instance.goals)
+            {
+                g.SetActive(true);
+                g.GetComponent<Goal>().wasReached = false;
+            }
+
+            Instance.GoalsLeft = Instance.originalGoalsLeft;
         }
         else
         {
@@ -143,6 +161,9 @@ public class LevelManager : Singleton<LevelManager>
 
     public static void Restart()
     {
+        Time.timeScale = 1f;
+        Instance.levelCompleted.SetActive(false);
+
         Destroy(player);
         player = null;
 
@@ -150,6 +171,14 @@ public class LevelManager : Singleton<LevelManager>
         {
             if (item != null) Destroy(item.gameObject);
         }
+
+        foreach (var g in Instance.goals)
+        {
+            g.SetActive(true);
+            g.GetComponent<Goal>().wasReached = false;
+        }
+
+        Instance.GoalsLeft = Instance.originalGoalsLeft;
 
         Instance.artificialGravityList = new List<ArtificialGravity>();
 
@@ -162,10 +191,12 @@ public class LevelManager : Singleton<LevelManager>
     public void LevelCompleted()
     {
         Time.timeScale = 0f;
+        levelCompleted.SetActive(true);
     }
 
     public static void GoToMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
     }
 }

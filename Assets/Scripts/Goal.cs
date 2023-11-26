@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    private bool wasReached = false;
+    public bool wasReached = false;
     SpriteRenderer spriteRenderer;
 
     private void Awake()
@@ -24,8 +24,10 @@ public class Goal : MonoBehaviour
 
     private void Dissolve()
     {
-        wasReached = true;
         LevelManager.Instance.GoalsLeft--;
+
+        if (LevelManager.Instance.GoalsLeft == 0) return;
+        wasReached = true;
         StartCoroutine(ChangeAlpha());
     }
 
@@ -44,6 +46,6 @@ public class Goal : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
