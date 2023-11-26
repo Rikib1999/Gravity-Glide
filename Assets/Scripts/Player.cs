@@ -23,4 +23,13 @@ public class Player : MonoBehaviour
         Handles.color = Color.blue;
         Handles.DrawLine(transform.position, transform.position + (new Vector3(direction.normalized.x, direction.normalized.y, 0) * speed));
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<ParticleSystem>().Play();
+        }
+    }
 }
