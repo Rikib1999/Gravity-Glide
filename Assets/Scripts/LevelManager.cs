@@ -12,7 +12,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private static GameObject player;
     private ArtificialGravity lastArtificialGravity;
-    private List<ArtificialGravity> artificialGravityList = new List<ArtificialGravity>();
+    private List<ArtificialGravity> artificialGravityList = new();
 
     public static bool IsPlaying => player != null;
 
